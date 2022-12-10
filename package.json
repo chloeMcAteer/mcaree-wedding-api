@@ -8,5 +8,10 @@
     "bundle": "rm -f guestbook_uploader_lambda.zip ; zip guestbook_uploader_lambda.zip -r *.js *.json node_modules/"
   },
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "aws-multipart-parser": "^0.2.1",
+    "path": "^0.12.7",
+    "uuid": "^9.0.0"
+  }
 }

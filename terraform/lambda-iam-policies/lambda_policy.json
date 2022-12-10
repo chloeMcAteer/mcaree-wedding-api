@@ -6,7 +6,10 @@
                 "logs:CreateLogGroup",
                 "logs:CreateLogStream",
                 "logs:PutLogEvents",
-                "execute-api:*"
+                "execute-api:*",
+                "dynamodb:PutItem",
+                "dynamodb:Query",
+                "s3:PutObject"
             ],
             "Resource": "*",
             "Effect": "Allow"

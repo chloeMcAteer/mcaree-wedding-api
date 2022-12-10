@@ -1,3 +1,7 @@
+variable "dynamo_table_name" {
+  type = string
+}
+
 resource "aws_lambda_function" "guestbook_uploader_lambda" {
   function_name = "guestbook_uploader"
   s3_bucket     = aws_s3_bucket.guestbook_uploader_lambda.bucket
@@ -13,7 +17,8 @@ resource "aws_lambda_function" "guestbook_uploader_lambda" {
 
   environment {
     variables = {
-      S3_BUCKET  = var.guestbook_uploads
+      S3_BUCKET_NAME  = var.guestbook_uploads
+      DATABASE_NAME = var.dynamo_table_name
     }
   }
 

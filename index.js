@@ -1,32 +1,54 @@
+const lib = require("./lib");
+var path = require("path");
+const { v4: uuidv4 } = require("uuid");
+const { parse } = require("aws-multipart-parser");
+
 // Lambda function index.handler
-module.exports.handler = async (event) => {
-    try {
-    
-        const response = {
-            statusCode: 200,
-            // Using AWS Lambda Proxy, the code itself is responsible for dealing with CORS
-            // https://docs.aws.amazon.com/apigateway/latest/developerguide/how-to-cors.html
-            headers: {
-                "Access-Control-Allow-Headers": "Content-Type",
-                "Access-Control-Allow-Origin": "*",
-                "Access-Control-Allow-Methods": "OPTIONS,DELETE"
-            },
-            body: JSON.stringify({ message: 'Successfully called lambda' })
-        };
+module.exports.handler = async (event, context, callback) => {
+  let response;
 
-        return response;
-    } catch (err) {
-        console.log(err);
-        const response = {
-            statusCode: 400,
-            headers: {
-                "Access-Control-Allow-Headers": "Content-Type",
-                "Access-Control-Allow-Origin": "*",
-                "Access-Control-Allow-Methods": "OPTIONS,DELETE"
-            },
-            body: JSON.stringify({ message: 'Something went wrong uploading image' })
-        };
+  try {
+    const formData = parse(event, true);
 
-        return response;
-    }
-}
+    const uploadedFile = formData.file.content;
+    const uploadedFileExt = path.extname(formData.file.filename);
+    const entryId = uuidv4();
+    const name = formData.name;
+    const message = formData.message;
+
+    await lib.uploadFile(`${entryId}.${uploadedFileExt}`, uploadedFile, uploadedFileExt);
+
+    const updatedTime = new Date(Date.now()).toISOString();
+
+    //Update the DB
+    await lib.createGuestEntry(
+        entryId,
+        name,
+        message,
+        updatedTime
+    );
+
+    response = {
+      statusCode: 200,
+      headers: {
+        "Access-Control-Allow-Headers": "Content-Type",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "OPTIONS, POST",
+      },
+      body: JSON.stringify("Successfully uploaded file"),
+    };
+  } catch (err) {
+    console.log(err);
+
+    response = {
+      statusCode: 500,
+      headers: {
+        "Access-Control-Allow-Headers": "Content-Type",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "OPTIONS, POST",
+      },
+      body: JSON.stringify(err.message),
+    };
+  }
+  return response;
+};
