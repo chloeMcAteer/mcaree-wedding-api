@@ -1,0 +1,12 @@
+{
+  "name": "mcaree-guestbook-api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "bundle": "rm -f guestbook_uploader_lambda.zip ; zip guestbook_uploader_lambda.zip -r *.js *.json node_modules/"
+  },
+  "author": "",
+  "license": "ISC"
+}

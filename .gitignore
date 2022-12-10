@@ -1,0 +1,11 @@
+.env
+node_modules/
+guestbook_uploader_lambda.zip
+
+.terraform
+.terraform.lock.hcl
+*.tfvars
+
+.vscode
+
+package-lock.json
